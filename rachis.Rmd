@@ -1,0 +1,19 @@
+---
+title: "Classification rachis"
+author: "Jonathan Nguyen"
+date: "12/10/2019"
+output: html_document
+---
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_packages, message = FALSE}
+library(tidyverse)
+```
+
+```{r tidyr}
+rachis_read <- read_csv("vertebral column data.csv")
+rachis_read
+```
