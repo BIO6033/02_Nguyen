@@ -1,5 +1,5 @@
 ---
-title: "Classification rachis"
+title: "Classification maladie du coeur"
 author: "Jonathan Nguyen"
 date: "12/10/2019"
 output: html_document
@@ -11,9 +11,64 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load_packages, message = FALSE}
 library(tidyverse)
+library(forcats)
 ```
 
 ```{r tidyr}
-rachis_read <- read_csv("vertebral column data.csv")
-rachis_read
+coeur_read <- read_csv("heart disease cleveland.csv")
+coeur_read
+
+coeur <- mutate(coeur_read, dx = ifelse(diagnosis == 0, "sain", "malade"))
+coeur
+
+coeur <- coeur %>% 
+  mutate(dx = as.factor(dx)) 
+
+#ggplot(data = coeur, (mapping = aes(x = age, y = serum_cholesterol, color = dx))) +
+  #geom_point()
+
+coeur %>% 
+  select(dx) %>% 
+  unlist() %>% # turns a data frame into a vector
+  levels()
+
+num_obs <- nrow(coeur)
+coeur %>% 
+  group_by(dx) %>% 
+  summarize(n = n(),
+            percentage = n() / num_obs * 100)
+
+age_cholesterol <- coeur %>%  
+  ggplot(aes(x = age, y = serum_cholesterol, color = dx)) + 
+    geom_point(alpha = 0.5) +
+    labs(color = "Diagnosis")
+age_cholesterol
+
 ```
+https://rstudio-pubs-static.s3.amazonaws.com/116317_e6922e81e72e4e3f83995485ce686c14.html#/
+
+```{r knn}
+library(caret)
+
+coeur_train <- coeur %>%
+  select("age", "serum_cholesterol")
+head(coeur_train)
+
+coeur_labels <- coeur %>% 
+  select(dx) %>% 
+  unlist()
+head(coeur_labels)
+
+k <- data.frame(k = 5)
+model_knn <- train(x = data.frame(coeur_train), y = coeur_labels, method = 'knn', tuneGrid = k)
+
+new_obs <- data.frame(age = 90, serum_cholesterol = 150)
+predict(object = model_knn, new_obs)
+```
+
+```{r gpplot}
+ggplot(data = rachis_read,(mapping = aes(x = sacral_slope, y = pelvic_tilt, color = diagnosis))) + 
+  geom_point(alpha = 0.5) 
+    
+```
+
